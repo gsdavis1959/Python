@@ -1,0 +1,3 @@
+# count unique with multiple columns
+df.groupby(['col_a', 'col_b']).ngroups
+
