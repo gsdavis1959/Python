@@ -3,3 +3,7 @@ df.groupby(['col_a', 'col_b']).ngroups
 
 # transformer model
 https://huggingface.co/sentence-transformers/multi-qa-MiniLM-L6-cos-v1/tree/main
+
+from google.colab import files
+files.upload()
+
