@@ -7,3 +7,9 @@ https://huggingface.co/sentence-transformers/multi-qa-MiniLM-L6-cos-v1/tree/main
 from google.colab import files
 files.upload()
 
+# remove punctuation and digits in a pandas column 
+df.poem = df.poem.apply(lambda x: x.translate(None, string.punctuation))
+df.poem = df.poem.apply(lambda x: x.translate(None, string.digits))
+# using re
+df['E'] = df['B'].map(lambda x: re.sub(r'\W+', '', x))
+
