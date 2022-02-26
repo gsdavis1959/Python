@@ -13,3 +13,10 @@ df.poem = df.poem.apply(lambda x: x.translate(None, string.digits))
 # using re
 df['E'] = df['B'].map(lambda x: re.sub(r'\W+', '', x))
 
+# read muliple files
+import os
+os.listdir()
+os.chdir(‘directory where the files are located’)
+files = [file for file in os.listdir()]
+df = pd.concat(map(pd.read_csv, files), ignore_index=True)
+df.head()
