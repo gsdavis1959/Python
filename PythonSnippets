@@ -20,3 +20,10 @@ os.chdir(‘directory where the files are located’)
 files = [file for file in os.listdir()]
 df = pd.concat(map(pd.read_csv, files), ignore_index=True)
 df.head()
+
+# delete a column
+del df[‘Age’]
+
+# sorting a dataframe
+df.sort(column=’Age’)
+
