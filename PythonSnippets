@@ -27,3 +27,15 @@ del df[‘Age’]
 # sorting a dataframe
 df.sort(column=’Age’)
 
+# and filter
+df[(df["class"] == 'A') & (df["score"] > 80)]
+
+# filter based on part of a string
+# if you need to avoid NaNs df2["Interests"] = df2["Interests"].fillna("")
+df[df["Interests"].str.contains("Reading")]
+df[df["Interests"].str.contains("reading", case=False)] # ignore case
+df[df["Interests"].str.contains(".*V.*")] # with wildcard
+
+
+
+
