@@ -37,5 +37,14 @@ df[df["Interests"].str.contains("reading", case=False)] # ignore case
 df[df["Interests"].str.contains(".*V.*")] # with wildcard
 
 
+# save jupyter notebook to html
+
+%%javascript
+IPython.notebook.save_notebook()
+
+import os
+os.system('jupyter nbconvert --to html yourNotebook.ipynb')
+# or with output
+os.system('jupyter nbconvert --execute --to html notebook.ipynb')
 
 
