@@ -47,4 +47,14 @@ os.system('jupyter nbconvert --to html yourNotebook.ipynb')
 # or with output
 os.system('jupyter nbconvert --execute --to html notebook.ipynb')
 
+# open oft file
+import win32com.client as win32
+outlook = win32.Dispatch('outlook.application')
+mail = outlook.CreateItemFromTemplate(0)
 
+#mail.Open() does not exist... but what instead?
+mail.Open('Template1.oft')
+
+mail.HtmlBody = alterEmail(mail.HtmlBody)
+mail.Display(True)
+mail.Save()
