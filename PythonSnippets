@@ -58,3 +58,43 @@ mail.Open('Template1.oft')
 mail.HtmlBody = alterEmail(mail.HtmlBody)
 mail.Display(True)
 mail.Save()
+
+# case when examples
+conditions = [
+    (df["age"].lt(10)),
+    (df["age"].ge(10) & df["age"].lt(20)),
+    (df["age"].ge(20) & df["age"].lt(30)),
+    (df["age"].ge(30) & df["age"].lt(50)),
+    (df["age"].ge(50)),
+]
+choices = ["baby", "kid", "young", "mature", "grandpa"]
+
+df["elderly"] = np.select(conditions, choices)
+
+# Results in:
+#      name  age  preTestScore  postTestScore  elderly
+#  0  Jason   42             4             25   mature
+#  1  Molly   52            24             94  grandpa
+#  2   Tina   36            31             57   mature
+#  3   Jake   24             2             62    young
+#  4    Amy   73             3             70  grandpa
+
+# using pyjanitor
+# pip install git+https://github.com/pyjanitor-devs/pyjanitor.git
+import pandas as pd
+import janitor as jn
+
+df.case_when(
+df.age.lt(10), 'baby', # 1st condition, result
+df.age.between(10, 20, 'left'), 'kid', # 2nd condition, result
+df.age.between(20, 30, 'left'), 'young', # 3rd condition, result
+ df.age.between(30, 50, 'left'), 'mature', # 4th condition, result
+'grandpa',  # default if none of the conditions match
+ column_name = 'elderly') # column name to assign to
+ 
+    name  age  preTestScore  postTestScore  elderly
+0  Jason   42             4             25   mature
+1  Molly   52            24             94  grandpa
+2   Tina   36            31             57   mature
+3   Jake   24             2             62    young
+4    Amy   73             3             70  grandpa
