@@ -98,3 +98,7 @@ df.age.between(20, 30, 'left'), 'young', # 3rd condition, result
 2   Tina   36            31             57   mature
 3   Jake   24             2             62    young
 4    Amy   73             3             70  grandpa
+
+# connect to ms access
+https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
+
