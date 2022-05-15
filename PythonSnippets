@@ -101,4 +101,6 @@ df.age.between(20, 30, 'left'), 'young', # 3rd condition, result
 
 # connect to ms access
 https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
+https://stackoverflow.com/questions/12704305/return-column-names-from-pyodbc-execute-statement
+https://stackoverflow.com/questions/16519385/output-pyodbc-cursor-results-as-python-dictionary
 
