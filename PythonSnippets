@@ -105,3 +105,5 @@ https://stackoverflow.com/questions/12704305/return-column-names-from-pyodbc-exe
 https://stackoverflow.com/questions/16519385/output-pyodbc-cursor-results-as-python-dictionary
 # concatenate rows with group by
 https://stackoverflow.com/questions/27298178/concatenate-strings-from-several-rows-using-pandas-groupby
+# update values from data in another dataframe
+https://stackoverflow.com/questions/49928463/python-pandas-update-a-dataframe-value-from-another-dataframe
