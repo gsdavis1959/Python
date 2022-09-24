@@ -99,6 +99,44 @@ df.age.between(20, 30, 'left'), 'young', # 3rd condition, result
 3   Jake   24             2             62    young
 4    Amy   73             3             70  grandpa
 
+
+# pipe
+
+# Changing the 'host_is_superhost' column values.
+def boolean(df):
+    df['host_is_superhost'] = df['host_is_superhost'].replace({'f': False, 't':True})
+    return df
+
+# Correcting the numbers appearance in 'price' column.
+def remove_dollar(df):
+    df['price'] = (df['price'].replace({'\$': '', ',':''}, regex = True)
+                   .replace({'.':''},).astype('float'))
+    return df
+
+# Setting 'Downtown' as the actual neighborhood for residences with 
+# touristic place names in 'neighbourhood' column.
+def downtown(df):
+    touristic = ['Downtown Crossing', 'Government Center', 'Leather District', 
+             'Chinatown','Theater District','Financial District']
+    
+    substitute = {location : 'Downtown' for location in touristic}
+    df['neighbourhood'] = df['neighbourhood'].replace(substitute)
+    return df
+    
+# Applying each function generated with 'pipe'.
+(airbnb.pipe(boolean)
+        .pipe(remove_dollar)
+        .pipe(downtown)).head()
+
+
+# scatter matrix
+# You can use a color map in order to customize the dots appearance.
+from matplotlib import cm
+cmap = cm.get_cmap('gnuplot')
+pd.plotting.scatter_matrix(X_train, c = y_train, marker = 'o' ,cmap = cmap, figsize = (8, 8), diagonal = 'kde');
+
+
+
 # connect to ms access
 https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
 https://stackoverflow.com/questions/12704305/return-column-names-from-pyodbc-execute-statement
