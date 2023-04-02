@@ -135,7 +135,24 @@ from matplotlib import cm
 cmap = cm.get_cmap('gnuplot')
 pd.plotting.scatter_matrix(X_train, c = y_train, marker = 'o' ,cmap = cmap, figsize = (8, 8), diagonal = 'kde');
 
+# connect to SharePoint list or file
+from office365.runtime.auth.user_credential import UserCredential
+from office365.sharepoint.client_context import ClientContext
 
+site_url = "https://yoursharepointsite.com" + f"/sites/{documentsite}/"
+ctx = ClientContext(site_url).with_credentials(UserCredential(username, password=password))
+ctx.load(ctx.web)
+ctx.execute_query()
+
+from office365.sharepoint.files import file
+import io
+
+file_url = file_dl if dynamic else f'/sites/{documentsite}/{file_dl}'
+response = file.File.open_binary(ctx, file_url)
+bytes_file_obj = io.BytesIO()
+bytes_file_obj.write(response.content)
+bytes_file_obj.seek(0)
+return bytes_file_obj
 
 # connect to ms access
 https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
