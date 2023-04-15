@@ -154,6 +154,9 @@ bytes_file_obj.write(response.content)
 bytes_file_obj.seek(0)
 return bytes_file_obj
 
+# sample groups
+df.groupby('Group_Id').sample(n=1)
+
 # connect to ms access
 https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
 https://stackoverflow.com/questions/12704305/return-column-names-from-pyodbc-execute-statement
