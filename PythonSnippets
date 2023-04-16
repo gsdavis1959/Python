@@ -157,6 +157,9 @@ return bytes_file_obj
 # sample groups
 df.groupby('Group_Id').sample(n=1)
 
+# compare dfs
+df = pd.concat([df1, df2]).groupby('UserName', as_index=False).sum()
+
 # connect to ms access
 https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
 https://stackoverflow.com/questions/12704305/return-column-names-from-pyodbc-execute-statement
