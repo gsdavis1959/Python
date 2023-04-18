@@ -160,6 +160,27 @@ df.groupby('Group_Id').sample(n=1)
 # compare dfs
 df = pd.concat([df1, df2]).groupby('UserName', as_index=False).sum()
 
+# change from one date to another
+
+#Create datetime column
+df['DateTime'] = pd.to_datetime(df['Date'], format='%b-%y')
+
+#Set it as index
+df.set_index('DateTime', inplace=True)
+
+#Then shift by month frequency:
+df['otm'] = df['Value'] - df['Value'].shift(1, freq='MS')
+df['oty'] = df['Value'] - df['Value'].shift(12, freq='MS')
+
+#Set it as index
+df.set_index('DateTime', inplace=True)
+
+#Then shift by month frequency:
+df['otm'] = df['Value'] - df['Value'].shift(1, freq='MS')
+df['oty'] = df['Value'] - df['Value'].shift(12, freq='MS')
+
+df['otm'] = df.Value.diff()
+df['oty'] = df.Value.diff(12)
 # connect to ms access
 https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
 https://stackoverflow.com/questions/12704305/return-column-names-from-pyodbc-execute-statement
