@@ -181,6 +181,29 @@ df['oty'] = df['Value'] - df['Value'].shift(12, freq='MS')
 
 df['otm'] = df.Value.diff()
 df['oty'] = df.Value.diff(12)
+
+# compare two dataframes
+col_groups = [c.columns for _, c in df.groupby(df.columns.str[0], axis=1)]
+df['diff'] = pd.Series(np.sum([(df[l] != df[r]).map({True: f'{l}-{r}',False:''}) + ',' for l, r in col_groups], axis=0)).str.strip(',')
+
+# compare rows
+import numpy as np
+import pandas as pd
+data = [{'a1': 1, 'b1': 2, 'a2':1, 'b2':2},
+        {'a1':1, 'b1': 2, 'a2': 1, 'b2':3},
+        {'a1':1, 'b1': 2, 'a2':3 , 'b2':4}]
+df = pd.DataFrame(data)
+compare = [('a1','a2'),('b1','b2')]
+
+def compare_rows(row):
+    differences = ['-'.join(comp)
+                   for comp in compare
+                   if row[comp[0]] != row[comp[1]]]
+    return ','.join(differences)
+
+df['diff'] = df.apply(compare_rows, axis=1)
+
+
 # connect to ms access
 https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
 https://stackoverflow.com/questions/12704305/return-column-names-from-pyodbc-execute-statement
