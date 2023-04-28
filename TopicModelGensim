@@ -1,0 +1,132 @@
+import pandas as pd
+import numpy as np
+import gensim
+from gensim import corpora
+import pyLDAvis.gensim_models as gensimvis
+import pyLDAvis
+
+# Load the CSV file
+df = pd.read_csv('data.csv')
+
+# Create a list of documents
+documents = df['text'].values.tolist()
+
+# Tokenize the documents
+tokenized_docs = [doc.split() for doc in documents]
+
+# Create a dictionary and corpus
+dictionary = corpora.Dictionary(tokenized_docs)
+corpus = [dictionary.doc2bow(doc) for doc in tokenized_docs]
+
+# Create the LDA model
+lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus, num_topics=10, id2word=dictionary)
+
+# Visualize the topics
+vis_data = gensimvis.prepare(lda_model, corpus, dictionary)
+pyLDAvis.display(vis_data)
+
+# Plot word frequency and bi-grams
+from nltk import FreqDist, bigrams
+import matplotlib.pyplot as plt
+
+# Combine all documents into one list
+all_docs = [word for doc in tokenized_docs for word in doc]
+
+# Calculate the frequency distribution
+freq_dist = FreqDist(all_docs)
+
+# Plot the frequency distribution
+freq_dist.plot(30, cumulative=False)
+
+# Calculate the bigrams
+bi_grams = bigrams(all_docs)
+
+# Calculate the frequency distribution of bigrams
+bi_freq_dist = FreqDist(bi_grams)
+
+# Plot the bigram frequency distribution
+bi_freq_dist.plot(30, cumulative=False)
+
+# alternative
+import pandas as pd
+import numpy as np
+import nltk
+from nltk import FreqDist, bigrams
+from nltk.corpus import stopwords
+import string
+import random
+import matplotlib.pyplot as plt
+
+# Load the CSV file
+df = pd.read_csv('data.csv')
+
+# Define a function to preprocess the text
+def preprocess(text):
+    # Tokenize the text
+    tokens = nltk.word_tokenize(text.lower())
+    # Remove stop words and punctuation
+    stop_words = set(stopwords.words('english') + list(string.punctuation))
+    tokens = [t for t in tokens if t not in stop_words]
+    # Remove numbers and short tokens
+    tokens = [t for t in tokens if not any(c.isdigit() for c in t) and len(t) > 2]
+    return tokens
+
+# Preprocess the documents
+documents = [(row['id'], preprocess(row['text'])) for idx, row in df.iterrows()]
+
+# Define a function to generate a random topic model
+def generate_topic_model(documents, num_topics):
+    # Count word frequencies
+    word_freq = FreqDist([word for doc in documents for word in doc[1]])
+    # Initialize topic-word assignments randomly
+    topic_word = {topic: {word: 0 for word in word_freq} for topic in range(num_topics)}
+    for doc in documents:
+        for word in doc[1]:
+            topic = random.randint(0, num_topics - 1)
+            topic_word[topic][word] += 1
+    # Normalize the topic-word counts
+    for topic in range(num_topics):
+        total = sum(topic_word[topic].values())
+        for word in topic_word[topic]:
+            topic_word[topic][word] /= total
+    # Initialize document-topic assignments randomly
+    doc_topic = {doc[0]: {topic: 0 for topic in range(num_topics)} for doc in documents}
+    for doc in documents:
+        for i, word in enumerate(doc[1]):
+            # Calculate the topic distribution for this word
+            topic_dist = [topic_word[topic][word] * doc_topic[doc[0]][topic] for topic in range(num_topics)]
+            # Normalize the topic distribution
+            total = sum(topic_dist)
+            if total > 0:
+                topic_dist = [p / total for p in topic_dist]
+            # Sample a new topic for this word
+            new_topic = np.random.choice(num_topics, p=topic_dist)
+            doc_topic[doc[0]][new_topic] += 1
+            topic_word[new_topic][word] += 1
+    # Normalize the document-topic counts
+    for doc in documents:
+        total = sum(doc_topic[doc[0]].values())
+        if total > 0:
+            for topic in doc_topic[doc[0]]:
+                doc_topic[doc[0]][topic] /= total
+    return topic_word, doc_topic
+
+# Generate a topic model with 10 topics
+topic_word, doc_topic = generate_topic_model(documents, num_topics=10)
+
+# Visualize the topics
+for topic in range(10):
+    top_words = sorted(topic_word[topic], key=topic_word[topic].get, reverse=True)[:10]
+    print('Topic {}: {}'.format(topic, ', '.join(top_words)))
+
+# Plot word frequency and bi-grams
+# Combine all documents into one list
+all_docs = [word for doc in documents for word in doc[1]]
+
+# Calculate the frequency distribution
+freq_dist = FreqDist(all_docs)
+
+# Plot the frequency distribution
+freq_dist.plot(30, cumulative=False)
+
+#
