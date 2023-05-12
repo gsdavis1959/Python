@@ -203,6 +203,14 @@ def compare_rows(row):
 
 df['diff'] = df.apply(compare_rows, axis=1)
 
+# conversion of R dpylr mutate 
+import pandas as pd
+
+data = pd.read_csv('data.csv')
+
+data = data.groupby('x').apply(lambda group: group.assign(value=group['value']*2))
+
+
 
 # connect to ms access
 https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
