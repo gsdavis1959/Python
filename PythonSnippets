@@ -258,6 +258,24 @@ no_top_words = 10
 display_topics(nmf, tfidf_feature_names, no_top_words)
 display_topics(lda, tf_feature_names, no_top_words)
 
+# create activity class to module function
+def reindex_tasks(task_list):
+    new_task_list = []
+    for task in task_list:
+        if task['type'] == 'task':
+            current_task_id = task['id']
+            new_task_list.append(task)
+        else:
+            subtask = task.copy()
+            subtask['id'] = current_task_id
+            new_task_list.append(subtask)
+    return new_task_list
+
+import pandas as pd
+
+# assuming your DataFrame is named df and the column with the task list is named 'tasks'
+df['new_tasks'] = df['tasks'].apply(reindex_tasks)
+
 
 # connect to ms access
 https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
