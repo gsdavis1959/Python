@@ -259,42 +259,36 @@ display_topics(nmf, tfidf_feature_names, no_top_words)
 display_topics(lda, tf_feature_names, no_top_words)
 
 # create activity class to module function
-def reindex_tasks(task_list):
-    new_task_list = []
-    for task in task_list:
-        if task['type'] == 'task':
-            current_task_id = task['id']
-            new_task_list.append(task)
-        else:
-            subtask = task.copy()
-            subtask['id'] = current_task_id
-            new_task_list.append(subtask)
-    return new_task_list
 
 import pandas as pd
 
-# assuming your DataFrame is named df and the column with the task list is named 'tasks'
-df['new_tasks'] = df['tasks'].apply(reindex_tasks)
+# Sample data frame
+df = pd.DataFrame({
+    'Activity ID': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    'Activity Type': ['Class', 'Study', 'Study', 'Class', 'Study', 'Class', 'Study', 'Study', 'Class']
+})
 
-# new version
-# Create a new column 'new_id' to store the modified IDs
-df['new_id'] = ''
+# Create a new column named 'New Activity ID'
+df['New Activity ID'] = ''
 
-# Iterate over each row in the dataframe
-for i, row in df.iterrows():
-    task_subtask_type = row['task_subtask_type']
+# Initialize a variable to store the current 'Class' activity ID
+current_class_id = None
+
+# Iterate through the rows of the data frame
+for index, row in df.iterrows():
+    activity_id = row['Activity ID']
+    activity_type = row['Activity Type']
     
-    # Check if the row represents a task
-    if 'Task' in task_subtask_type:
-        task_id = row['id']
-        df.at[i, 'new_id'] = task_id
+    # Check if the activity type is 'Class'
+    if activity_type == 'Class':
+        current_class_id = activity_id
     
-    # Assign the task ID to all subsequent subtasks until the next task is encountered
-    else:
-        df.at[i, 'new_id'] = task_id
+    # Assign the current 'Class' activity ID to the 'New Activity ID' column
+    df.at[index, 'New Activity ID'] = current_class_id
 
-# Print the modified dataframe
+# Print the updated data frame
 print(df)
+
 
 
 # connect to ms access
