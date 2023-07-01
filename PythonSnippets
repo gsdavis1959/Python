@@ -389,6 +389,51 @@ for i in range(len(X)):
 for r in result:
     print(r)
 
+#### Connect to smb
+
+To change the directory and load a Hugging Face model using the smbclient library in Python, you need to follow these steps:
+Connect to the Windows share drive:
+
+from smb.SMBConnection import SMBConnection
+
+# Create an SMB connection object
+conn = SMBConnection('<username>', '<password>', '<client_name>', '<server_name>')
+
+# Connect to the server
+connected = conn.connect('<server_ip>', <server_port>)
+
+Replace <username>, <password>, <client_name>, <server_name>, <server_ip>, and <server_port> with the appropriate values for your setup.
+Change the current directory to the desired folder:
+
+# Change to the desired directory path
+conn.chdir('<directory_path>')
+
+Replace <directory_path> with the path to the folder containing the Hugging Face model file.
+
+Read and load the Hugging Face model:
+
+
+from transformers import AutoModel
+
+# Load the Hugging Face model file
+model_path = '<model_file_name>'
+model_file, _ = conn.retrieveFile('<model_path_on_share>', model_path)
+
+# Load the model using the local file path
+model = AutoModel.from_pretrained(model_path)
+
+Replace <model_file_name> with the name of the Hugging Face model file (e.g., 'model.bin'). Also, make sure to specify <model_path_on_share> as the path to the model file on the share drive.
+With these steps, you should be able to connect to the share drive, change the directory to the desired folder, and load the Hugging Face model using the smbclient library in Python.
+
+
+
+
+
+
+
+
+
+
 # connect to ms access
 https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
 https://stackoverflow.com/questions/12704305/return-column-names-from-pyodbc-execute-statement
