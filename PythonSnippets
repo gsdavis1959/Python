@@ -446,3 +446,32 @@ https://stackoverflow.com/questions/49928463/python-pandas-update-a-dataframe-va
 https://www.tutorialspoint.com/python-make-pair-from-two-list-such-that-elements-are-not-same-in-pairs
 # add columns
 https://towardsdatascience.com/10-ways-to-add-a-column-to-pandas-dataframes-ccadf7306d89
+
+# load nltk stopwords
+
+from nltk.corpus import stopwords
+
+# Define the path to your custom stopwords file
+stopwords_file_path = 'path/to/your/stopwords.txt'
+
+# Load stopwords from the custom file
+with open(stopwords_file_path, 'r') as f:
+    custom_stopwords = set(f.read().splitlines())
+
+# Add the custom stopwords to the NLTK stopwords set
+nltk_stopwords = set(stopwords.words('english'))
+nltk_stopwords.update(custom_stopwords)
+
+# Now, nltk_stopwords contains the combined set of NLTK and custom stopwords
+
+# load spacy model, Replace 'path/to/your/en_core_web_sm' with the actual path 
+# to the directory where you've extracted the model. 
+# This code will load the "en_core_web_sm" model from the specified local directory.
+
+import spacy
+
+# Replace 'path/to/your/model' with the actual path to the model directory
+model_path = 'path/to/your/model'
+
+nlp = spacy.load(model_path)
+
