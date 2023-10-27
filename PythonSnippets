@@ -475,3 +475,62 @@ model_path = 'path/to/your/model'
 
 nlp = spacy.load(model_path)
 
+import datetime
+import random
+
+def schedule_workers(workers, time_segments):
+  """
+  Schedules workers into time segments.
+
+  Args:
+    workers: A list of workers.
+    time_segments: A list of time segments.
+
+  Returns:
+    A list of tuples, where each tuple is a worker and the time segment they are assigned to.
+  """
+
+  # Create a list of available workers.
+  available_workers = list(workers)
+
+  # Create a list of assigned workers.
+  assigned_workers = []
+
+  # Loop through the time segments.
+  for time_segment in time_segments:
+    # If there are more available workers than time segments, select a random worker for each time segment.
+    if len(available_workers) > len(time_segments):
+      for time_segment in time_segments:
+        worker = random.choice(available_workers)
+        assigned_workers.append((worker, time_segment))
+        available_workers.remove(worker)
+    # Otherwise, assign the first available worker to each time segment.
+    else:
+      for time_segment in time_segments:
+        worker = available_workers.pop()
+        assigned_workers.append((worker, time_segment))
+
+  return assigned_workers
+
+if __name__ == "__main__":
+  # Create a list of workers.
+  workers = ["Worker 1", "Worker 2", "Worker 3", "Worker 4"]
+
+  # Create a list of time segments.
+  time_segments = [
+    "9:00 AM - 10:00 AM",
+    "10:00 AM - 11:00 AM",
+    "11:00 AM - 12:00 PM",
+    "12:00 PM - 1:00 PM",
+    "1:00 PM - 2:00 PM",
+    "2:00 PM - 3:00 PM",
+    "3:00 PM - 4:00 PM",
+    "4:00 PM - 5:00 PM"
+  ]
+
+  # Schedule the workers.
+  assigned_workers = schedule_workers(workers, time_segments)
+
+  # Print the scheduled workers.
+  for worker, time_segment in assigned_workers:
+    print(f"{worker} is scheduled for {time_segment}")
