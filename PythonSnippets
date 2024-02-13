@@ -425,8 +425,72 @@ model = AutoModel.from_pretrained(model_path)
 Replace <model_file_name> with the name of the Hugging Face model file (e.g., 'model.bin'). Also, make sure to specify <model_path_on_share> as the path to the model file on the share drive.
 With these steps, you should be able to connect to the share drive, change the directory to the desired folder, and load the Hugging Face model using the smbclient library in Python.
 
+# recommendation
+
+from sklearn.metrics import dcg_score, ndcg_score
+
+def precision_k(actuals, recs, k=5):
+  return len(set(recs[0:k]).intersection(set(actuals)))/k
+
+def recall_k(actuals, recs, k=5):
+  return len(set(recs[0:k]).intersection(set(actuals)))/len(actuals)
+
+def dcg_k(actuals, recs, k=5):
+  relevance = np.array([[float(i in actuals) for i in recs[0:k]]])
+  score = k - np.arange(k)
+  return dcg_score(relevance, score.reshape(1,-1), k=k)
+
+def ndcg_k(actuals, recs, k=5):
+  relevance = np.array([[float(i in actuals) for i in recs[0:k]]])
+  score = k - np.arange(k)
+  return ndcg_score(relevance, score.reshape(1,-1), k=k)
+
+def recall_stage(model, user_id, user_item_data, ratings_train, N):
+  filter_items = ratings_train[ratings_train['user id']==user_id]['item id'].values
+  filter_items = filter_items - 1
+  user_id = user_id - 1
+
+  recs, scores = model.recommend(user_id,
+                                 user_item_data[user_id],
+                                 filter_items=filter_items,
+                                 N=N_recall)
+  recs = recs.flatten() + 1
+  return recs
+
+def evaluate(user_id, ratings_test_pos, recs, k=5):
+  actuals = ratings_test_pos[ratings_test_pos['user id']==user_id]['item id'].values
+  return precision_k(actuals, recs, k), recall_k(actuals, recs, k), dcg_k(actuals, recs, k)
 
 
+# recommend items for a user
+N_recall=30
+user_id=1
+recs = recall_stage(model, user_id, user_item_data, ratings_train, N_recall)
+evaluate(user_id, ratings_test_pos, recs, 20)
+
+# prompt: i want to show the top 10 recommended movies for user 1
+
+recommended_movies = movie[movie['item id'].isin(recs[0:10])]
+recommended_movies[['title', 'item id']]
+
+# prompt: i want to loop through each user and get the top movie recommendation
+
+user_ids = ratings_train['user id'].unique()
+top_movies = []
+for user_id in user_ids:
+  recs = recall_stage(model, user_id, user_item_data, ratings_train, N_recall)
+  recommended_movies = movie[movie['item id'].isin(recs[0:1])]
+  top_movies.append(recommended_movies['title'].values[0])
+
+top_movies_df = pd.DataFrame({'user_id': user_ids, 'top_movie': top_movies})
+top_movies_df.head()
+
+
+view = ratings_test_pos[ratings_test_pos['user id']==user_id]['item id'].values
+view = view - 1
+view = pd.DataFrame(view, columns=['item id'])
+view['title'] = view['item id'].apply(lambda x: movie[movie['item id']==x]['title'].values[0])
+view.head()
 
 
 
