@@ -492,7 +492,58 @@ view = pd.DataFrame(view, columns=['item id'])
 view['title'] = view['item id'].apply(lambda x: movie[movie['item id']==x]['title'].values[0])
 view.head()
 
+# Recommendations 2
 
+import pandas as pd
+from surprise import Dataset, Reader
+from surprise import KNNBasic
+from surprise.model_selection import train_test_split
+from collections import defaultdict
+
+# Sample data frame
+data = {
+    'UserID': [1, 2, 1, 2, 3, 3, 1],
+    'Title': ['ItemA', 'ItemA', 'ItemB', 'ItemB', 'ItemC', 'ItemA', 'ItemC'],
+    'Rating': [5, 4, 3, 2, 5, 3, 4]
+}
+df = pd.DataFrame(data)
+
+# Convert the data frame into a format suitable for 'surprise'
+reader = Reader(rating_scale=(1, 5))
+data = Dataset.load_from_df(df[['UserID', 'Title', 'Rating']], reader)
+
+# Build the training set from the data
+trainset = data.build_full_trainset()
+
+# Use KNN to compute similarities between users
+algo = KNNBasic(sim_options={'user_based': True})
+algo.fit(trainset)
+
+# Predict ratings for all pairs (user, item) that are NOT in the training set
+testset = trainset.build_anti_testset()
+predictions = algo.test(testset)
+
+# Convert predictions to a DataFrame
+pred_df = pd.DataFrame(predictions, columns=['uid', 'iid', 'rui', 'est', 'details'])
+
+# Function to get top-N recommendations for each user
+def get_top_n_recommendations(predictions_df, n=5):
+    top_n = defaultdict(list)
+    for uid, iid, _, est, _ in predictions_df.itertuples(index=False):
+        top_n[uid].append((iid, est))
+
+    # Sort the predictions for each user and retrieve the highest rated items
+    for uid, user_ratings in top_n.items():
+        user_ratings.sort(key=lambda x: x[1], reverse=True)
+        top_n[uid] = user_ratings[:n]
+   
+    return top_n
+
+# Example: Get top 3 recommendations for each user
+top_n_recommendations = get_top_n_recommendations(pred_df, n=3)
+
+# Convert top_n_recommendations dict to DataFrame for easier viewing
+recommendations_df = pd.DataFrame([(uid, iid, rating) for uid, user_ratings in top_n_recommendations.items() for iid, rating in user_ratings], columns=['UserID', 'Recommended Item', 'Estimated Rating'])
 
 
 
