@@ -1,0 +1,61 @@
+from sklearn.decomposition import TruncatedSVD
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+import pandas as pd
+import numpy as np
+
+# Assuming `df` is the provided dataframe with columns ['user', 'title', 'rating']
+
+# Convert user and title to categorical indices for matrix creation
+df['user_id'] = df['user'].astype("category").cat.codes
+df['item_id'] = df['title'].astype("category").cat.codes
+
+# Create a pivot table for the user-item matrix
+user_item_matrix = df.pivot_table(index='user_id', columns='item_id', values='rating').fillna(0)
+
+# Split data into training and testing sets
+train_data, test_data = train_test_split(user_item_matrix, test_size=0.2, random_state=42)
+
+# Perform Truncated SVD
+n_components = 20  # Number of latent factors. You may need to tune this.
+model = TruncatedSVD(n_components=n_components, random_state=42)
+model.fit(train_data)
+
+# Transform both train and test data
+train_data_reduced = model.transform(train_data)
+test_data_reduced = model.transform(test_data)
+
+# Predict ratings
+train_data_pred = model.inverse_transform(train_data_reduced)
+test_data_pred = model.inverse_transform(test_data_reduced)
+
+# Calculate RMSE for evaluation
+train_error = mean_squared_error(train_data.values, train_data_pred, squared=False)
+test_error = mean_squared_error(test_data.values[test_data != 0], test_data_pred[test_data != 0], squared=False)
+
+# Generate recommendations for each user
+user_recommendations = []
+for user_id in range(test_data.shape[0]):
+    user_ratings = test_data.iloc[user_id, :].values
+    pred_ratings = test_data_pred[user_id, :]
+    
+    # Find the item with the highest predicted rating that the user hasn't rated yet
+    unrated_items = np.where(user_ratings == 0)[0]
+    if unrated_items.size > 0:
+        recommended_item_id = unrated_items[np.argmax(pred_ratings[unrated_items])]
+        
+        # Map back to original user and title
+        user = df[df['user_id'] == user_id]['user'].iloc[0]
+        original_title = df[(df['user_id'] == user_id) & (df['rating'] > 0)]['title'].iloc[0]  # Simplification
+        predicted_title = df[df['item_id'] == recommended_item_id]['title'].iloc[0]
+        
+        user_recommendations.append((user, original_title, predicted_title))
+
+# Create a dataframe with the recommendations and export to a CSV file
+recommendations_df = pd.DataFrame(user_recommendations, columns=['User', 'Original Title', 'Predicted Title'])
+recommendations_df.to_csv('user_recommendations.csv', index=False)
+
+# Output RMSE for evaluation
+print(f"Train RMSE: {train_error}, Test RMSE: {test_error}")
+
+# Note: This code is for demonstration and may require adjustments for your specific dataset and environment.
