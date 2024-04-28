@@ -16,7 +16,7 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 # Load the SpaCy model
 nlp = spacy.load("en_core_web_sm")
 
-openai_key = "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"
+openai_key = "xxxx"
 llm = OpenAI(openai_api_key=openai_key, max_tokens=-1)
 
 num_topics = 10
