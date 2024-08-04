@@ -6,3 +6,7 @@ https://github.com/oobabooga/text-generation-webui?tab=readme-ov-file
 
 # llama-cpp github
 https://pypi.org/project/llama-cpp-python/
+
+#remove python environment
+https://stackoverflow.com/questions/49127834/removing-conda-environment
+
