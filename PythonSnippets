@@ -649,3 +649,6 @@ if __name__ == "__main__":
   # Print the scheduled workers.
   for worker, time_segment in assigned_workers:
     print(f"{worker} is scheduled for {time_segment}")
+
+# python shiny deployment
+https://shiny.posit.co/py/docs/shinylive.html
