@@ -10,3 +10,5 @@ https://pypi.org/project/llama-cpp-python/
 #remove python environment
 https://stackoverflow.com/questions/49127834/removing-conda-environment
 
+# embeddings
+https://stackoverflow.com/questions/78248526/how-to-create-vector-embeddings-using-sentencetransformers
